@@ -8,6 +8,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.g3.libreriaestelar_pi.model.Auth;
+import com.g3.libreriaestelar_pi.serviceImplement.UserDetailsImpl;
+import com.g3.libreriaestelar_pi.util.Token;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;

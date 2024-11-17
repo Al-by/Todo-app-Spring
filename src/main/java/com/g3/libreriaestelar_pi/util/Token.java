@@ -1,4 +1,4 @@
-package com.g3.libreriaestelar_pi.security;
+package com.g3.libreriaestelar_pi.util;
 
 import java.util.Collections;
 import java.util.Date;
@@ -15,7 +15,7 @@ import io.jsonwebtoken.security.Keys;
 public class Token {
 
 	private final static String TOKEN_SECRETO = "S7YHPE9D74imh2FFfzqgFrPnDu6X5WQX";
-    private final static Long TOKEN_DURACION = 1_800_000L;
+    private final static Long TOKEN_DURACION = 1_800_000L;//duracion del token de 30min
 
     public static String crearToken(String user, String email) {
         long expiracionTiempo = TOKEN_DURACION;
