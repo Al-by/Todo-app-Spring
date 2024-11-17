@@ -29,12 +29,12 @@ public class WebSecurityConfig {
 		JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
 		jwtAuthenticationFilter.setAuthenticationManager(authManager);
 		jwtAuthenticationFilter.setFilterProcessesUrl("/login");
-		
+
 		return http
 				.csrf().disable()
 				.authorizeHttpRequests()
-				.anyRequest()
-				.authenticated()
+				.antMatchers("/api/register").permitAll() // Permitir acceso público al registrer
+				.anyRequest().authenticated()
 				.and()
 				.httpBasic()
 				.and()
@@ -44,7 +44,6 @@ public class WebSecurityConfig {
 				.addFilter(jwtAuthenticationFilter)
 				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
-				
 	}
 	
 	@Bean
@@ -61,15 +60,4 @@ public class WebSecurityConfig {
 				.build();
 			
 	}
-	
-	
-	
-	
-	
-	/*
-	 * public static void main(String[] args) { System.out.println("Pasword: "+ new
-	 * BCryptPasswordEncoder().encode("admin")); }
-	 */
-	 
-
 }
