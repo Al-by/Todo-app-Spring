@@ -1,4 +1,4 @@
-package com.g3.libreriaestelar_pi.security;
+package com.g3.libreriaestelar_pi.model;
 
 import lombok.Data;
 
