@@ -38,8 +38,12 @@ public class UsuarioService {
     }
     
     private void validarEmailUnico(String email) {
+    	String regex = "^[a-zA-Z0-9._%+-]+@(gmail\\.com|hotmail\\.com|[a-zA-Z0-9.-]+\\.edu\\.pe)$";
         if (usuarioRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("El email ya está registrado.");
+        }
+        if (email == null || !email.matches(regex)) {
+            throw new IllegalArgumentException("Coloque un email aceptable.");
         }
     }
     
