@@ -32,7 +32,7 @@ public class UsuarioService {
     }
     
     private void validarDni(String dni) {
-        if (dni == null || !dni.matches("\\d{1,8}")) {
+        if (dni == null || !dni.matches("\\d{8}")) {
             throw new IllegalArgumentException("El DNI debe contener solo números y tener hasta 8 caracteres.");
         }
     }
