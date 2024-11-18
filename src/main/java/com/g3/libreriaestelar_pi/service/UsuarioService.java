@@ -18,17 +18,24 @@ public class UsuarioService {
     private PasswordEncoder passwordEncoder;
 
     public Usuario registrarUsuario(UsuarioRegistroDTO usuarioDTO) {
-    	validarDni(usuarioDTO.getDni());
+        validarUsername(usuarioDTO.getUsername());
+        validarDni(usuarioDTO.getDni());
         validarEmailUnico(usuarioDTO.getEmail());
         validarPassword(usuarioDTO.getPassword());
 
         Usuario usuario = new Usuario();
-        usuario.setNombre(usuarioDTO.getNombre());
+        usuario.setUsername(usuarioDTO.getUsername());
         usuario.setEmail(usuarioDTO.getEmail());
         usuario.setPassword(passwordEncoder.encode(usuarioDTO.getPassword()));
         usuario.setDni(usuarioDTO.getDni());
 
         return usuarioRepository.save(usuario);
+    }
+
+    private void validarUsername(String username) {
+        if (username == null || username.length() > 30 || username.length() < 6) {
+            throw new IllegalArgumentException("El username debe tener entre 6 a 30 caracteres");
+        }
     }
     
     private void validarDni(String dni) {
@@ -48,8 +55,8 @@ public class UsuarioService {
     }
     
     private void validarPassword(String password) {
-        if (password == null || password.length() > 8 || password.length() < 6) {
-            throw new IllegalArgumentException("La contraseña debe tener entre 6 y 8 caracteres.");
+        if (password == null || password.length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener 8 o mas caracteres.");
         }
 
         if (!password.matches(".*[A-Z].*")) {
