@@ -52,7 +52,7 @@ public class UserDetailsImpl implements UserDetails {
 	}
 
 	public String getNombre() {
-		return usuario.getNombre();
+		return usuario.getUsername();
 	}
 
 }
