@@ -36,11 +36,17 @@ public class UsuarioService {
         if (username == null || username.length() > 30 || username.length() < 6) {
             throw new IllegalArgumentException("El username debe tener entre 6 a 30 caracteres");
         }
+        if (usuarioRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("El username ya está en uso.");
+        }
     }
     
     private void validarDni(String dni) {
         if (dni == null || !dni.matches("\\d{8}")) {
             throw new IllegalArgumentException("El DNI debe contener solo números y tener hasta 8 caracteres.");
+        }
+        if (usuarioRepository.existsByDni(dni)) {
+            throw new IllegalArgumentException("El DNI ya está en uso.");
         }
     }
     
