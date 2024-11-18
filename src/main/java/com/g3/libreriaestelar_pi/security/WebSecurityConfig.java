@@ -31,6 +31,8 @@ public class WebSecurityConfig {
 		jwtAuthenticationFilter.setFilterProcessesUrl("/login");
 
 		return http
+				.cors()
+				.and()
 				.csrf().disable()
 				.authorizeHttpRequests()
 				.antMatchers("/api/register").permitAll() // Permitir acceso público al registrer
