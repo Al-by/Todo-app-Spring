@@ -10,7 +10,6 @@ import com.g3.libreriaestelar_pi.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
 
     @Autowired
