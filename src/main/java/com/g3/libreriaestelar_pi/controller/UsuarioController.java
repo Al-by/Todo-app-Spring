@@ -28,6 +28,11 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/welcome") // Endpoint específico
+    public ResponseEntity<Object> bienvenido() {
+        return ResponseEntity.ok("Bienvenido al sistema!");
+    }
+
     // Clase estática para la estructura de respuesta de error
     public static class ErrorResponse {
         private String errorType;
