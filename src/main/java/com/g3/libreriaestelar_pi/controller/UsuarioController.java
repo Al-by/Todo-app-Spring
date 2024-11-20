@@ -18,8 +18,9 @@ public class UsuarioController {
     @PostMapping("/register")
     public ResponseEntity<Object> registrarUsuario(@Valid @RequestBody UsuarioRegistroDTO usuarioDTO) {
         try {
-            usuarioService.registrarUsuario(usuarioDTO);
-            return new ResponseEntity<>(usuarioService.registrarUsuario(usuarioDTO), HttpStatus.CREATED);
+            return new ResponseEntity<>(
+                    usuarioService.registrarUsuario(usuarioDTO), HttpStatus.CREATED
+            );
         } catch (IllegalArgumentException e) {
             // Devuelve un mensaje de error con código 400
             ErrorResponse errorResponse = new ErrorResponse("VALIDATION_ERROR", e.getMessage());
