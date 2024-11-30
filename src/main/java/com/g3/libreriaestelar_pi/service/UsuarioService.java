@@ -17,6 +17,11 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public Usuario findByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+    }
+
     public Usuario registrarUsuario(UsuarioRegistroDTO usuarioDTO) {
         validarUsername(usuarioDTO.getUsername());
         validarDni(usuarioDTO.getDni());
