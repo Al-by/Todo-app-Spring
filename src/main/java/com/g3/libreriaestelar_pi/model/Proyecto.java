@@ -1,6 +1,8 @@
 package com.g3.libreriaestelar_pi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 import java.util.List;
@@ -32,6 +34,7 @@ public class Proyecto {
     private Usuario usuario;
     
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference//Ignorar la serializacion de la lista tareas
     private List<Tarea> tareas;
 
     

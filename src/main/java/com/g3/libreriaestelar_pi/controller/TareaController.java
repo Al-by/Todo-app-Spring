@@ -25,27 +25,27 @@ public class TareaController {
 	@Autowired
     private TareaService tareaService;
 
-
-	@PostMapping("/proyecto/{proyectoId}")
+	//Endpoint para crear una tarea en un proyecto especifico
+	@PostMapping("/proyectos/{proyectoId}/tareas") 
     public ResponseEntity<Tarea> crearTarea(@RequestBody TareaDTO tareaDTO, @PathVariable Long proyectoId) {
         Tarea tarea = tareaService.crearTarea(tareaDTO, proyectoId);
         return new ResponseEntity<>(tarea, HttpStatus.CREATED);
     }
 	
-	
-	@GetMapping("/tareas")
+	//Endpoint para listar todas las tareas
+	@GetMapping("/tareas") 
     public ResponseEntity<List<Tarea>> listarTareas() {
         List<Tarea> tareas = tareaService.listarTareas();
         return new ResponseEntity<>(tareas, HttpStatus.OK);
     }
 	
-    /*@GetMapping("/proyecto/{proyectoId}")
+    @GetMapping("/proyectos/{proyectoId}/tareas")
     public ResponseEntity<List<Tarea>> listarTareasPorProyecto(@PathVariable Long proyectoId) {
         List<Tarea> tareas = tareaService.listarTareasPorProyecto(proyectoId);
         return new ResponseEntity<>(tareas, HttpStatus.OK);
     }
 
-    // Endpoint para actualizar una tarea existente
+    /*// Endpoint para actualizar una tarea existente
     @PutMapping("/{id}/proyecto/{proyectoId}")
     public ResponseEntity<Tarea> actualizarTarea(@PathVariable Long id, @PathVariable Long proyectoId, @RequestBody TareaDTO tareaDTO) {
         Tarea tarea = tareaService.actualizarTarea(id, tareaDTO, proyectoId);

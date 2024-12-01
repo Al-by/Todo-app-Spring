@@ -12,10 +12,10 @@ public interface TareaService {
 
     List<Tarea> listarTareas();
 
-	/*
+	
 	List<Tarea> listarTareasPorProyecto(Long proyectoId);
 
-    Tarea actualizarTarea(Long id, TareaDTO tareaDTO, Long proyectoId);
+	/*Tarea actualizarTarea(Long id, TareaDTO tareaDTO, Long proyectoId);
 
     void eliminarTarea(Long id);
 	 */

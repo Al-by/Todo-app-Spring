@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Data;
 
 @Entity
@@ -32,6 +34,7 @@ public class Tarea {
 	
     @ManyToOne
     @JoinColumn(name = "proyecto_id", nullable = false)
+    @JsonBackReference // Evita la serialización recursiva del proyecto
     private Proyecto proyecto;
 	
 

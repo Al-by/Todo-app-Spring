@@ -40,12 +40,13 @@ public class TareaServiceImpl implements TareaService {
 
 		return tareaRepository.findAll();
 	}
-
-	/*
-	 @Override
+	
+	@Override
     public List<Tarea> listarTareasPorProyecto(Long proyectoId) {
         return tareaRepository.findByProyectoId(proyectoId);
     }
+
+	/*
 
     @Override
     public Tarea actualizarTarea(Long id, TareaDTO tareaDTO, Long proyectoId) {
