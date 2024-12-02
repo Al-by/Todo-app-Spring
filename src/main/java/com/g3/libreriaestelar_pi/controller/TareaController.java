@@ -2,6 +2,8 @@ package com.g3.libreriaestelar_pi.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +29,11 @@ public class TareaController {
 
 	//Endpoint para crear una tarea en un proyecto especifico
 	@PostMapping("/proyectos/{proyectoId}/tareas") 
-    public ResponseEntity<Tarea> crearTarea(@RequestBody TareaDTO tareaDTO, @PathVariable Long proyectoId) {
-        Tarea tarea = tareaService.crearTarea(tareaDTO, proyectoId);
-        return new ResponseEntity<>(tarea, HttpStatus.CREATED);
-    }
+	public ResponseEntity<Tarea> crearTarea(@Valid @RequestBody TareaDTO tareaDTO, @PathVariable Long proyectoId) {
+	    Tarea tarea = tareaService.crearTarea(tareaDTO, proyectoId);
+
+	    return ResponseEntity.status(HttpStatus.CREATED).body(tarea);
+	}
 	
 	//Endpoint para listar todas las tareas
 	@GetMapping("/tareas") 

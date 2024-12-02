@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProyectoRepository extends JpaRepository<Proyecto, Long> {
+	boolean existsByNombreAndUsuarioId(String nombre, Long usuarioId);
     List<Proyecto> findByUsuarioId(Long usuarioId);
     Optional<Proyecto> findByIdAndUsuarioId(Long id, Long usuarioId);
 }

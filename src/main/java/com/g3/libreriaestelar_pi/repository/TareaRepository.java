@@ -10,5 +10,6 @@ import com.g3.libreriaestelar_pi.model.Tarea;
 @Repository
 public interface TareaRepository extends JpaRepository<Tarea, Long> {
 	List<Tarea> findByProyectoId(Long proyectoId);
+    boolean existsByDescripcionAndProyectoId(String descripcion, Long proyectoId);
 
 }
