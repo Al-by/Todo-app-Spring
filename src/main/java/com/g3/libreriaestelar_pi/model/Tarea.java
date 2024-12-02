@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -25,6 +26,7 @@ public class Tarea {
     private Long id;
 	
 	@Column(nullable = false, length = 255)
+    @NotBlank(message = "La descripción no puede estar vacía")
 	private String descripcion;
 	
 	private LocalDateTime fechaVencimiento; //permite registrar fecha y hora
