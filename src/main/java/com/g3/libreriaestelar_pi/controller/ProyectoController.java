@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api")
 public class ProyectoController {
@@ -38,7 +40,7 @@ public class ProyectoController {
     }
 
     @PostMapping("/proyectos")
-    public ResponseEntity<Object> crearProyecto(@RequestBody ProyectoDTO proyectoDTO) {
+    public ResponseEntity<Object> crearProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO) {
         Usuario usuario = obtenerUsuarioLogueado();
         try {
             Proyecto proyecto = proyectoService.crearProyecto(proyectoDTO, usuario.getId());
