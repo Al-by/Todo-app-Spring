@@ -23,6 +23,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public Proyecto crearProyecto(ProyectoDTO proyectoDTO, Long usuarioId) {
     	validarNombreUnico(proyectoDTO.getNombre(), usuarioId);
+    	
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         Proyecto proyecto = new Proyecto();
@@ -61,7 +62,9 @@ public class ProyectoServiceImpl implements ProyectoService {
     
     //VALIDACIONES
     private void validarNombreUnico(String nombre, Long usuarioId) {
-        if (proyectoRepository.existsByNombreAndUsuarioId(nombre, usuarioId)) {
+	    boolean existeProyecto = proyectoRepository.existsByNombreAndUsuarioId(nombre, usuarioId);
+
+        if (existeProyecto) {
             throw new RuntimeException("Ya existe un proyecto con este nombre para el usuario.");
         }
     }

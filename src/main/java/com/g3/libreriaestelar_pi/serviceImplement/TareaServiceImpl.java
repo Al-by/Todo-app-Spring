@@ -18,11 +18,13 @@ public class TareaServiceImpl implements TareaService {
 	@Autowired
 	private TareaRepository tareaRepository;
 	
-	 @Autowired
-	    private ProyectoRepository proyectoRepository;
+	@Autowired
+	private ProyectoRepository proyectoRepository;
 
 	@Override
     public Tarea crearTarea(TareaDTO tareaDTO, Long proyectoId) {
+	    validarNombreTareaUnico(tareaDTO.getDescripcion(), proyectoId);
+
         Proyecto proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
 
@@ -46,6 +48,15 @@ public class TareaServiceImpl implements TareaService {
         return tareaRepository.findByProyectoId(proyectoId);
     }
 
+	//VALIDACIONES
+	private void validarNombreTareaUnico(String nombreTarea, Long proyectoId) {
+	    boolean existeTarea = tareaRepository.existsByDescripcionAndProyectoId(nombreTarea, proyectoId);
+	    
+	    if (existeTarea) {
+	        throw new IllegalArgumentException("Ya existe una tarea con el mismo nombre en este proyecto.");
+	    }
+	}
+	
 	/*
 
     @Override
