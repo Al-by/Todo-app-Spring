@@ -10,7 +10,7 @@ import com.g3.libreriaestelar_pi.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api")
-public class UsuarioController {
+public class  UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
