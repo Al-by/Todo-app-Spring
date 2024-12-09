@@ -1,5 +1,6 @@
 package com.g3.libreriaestelar_pi.serviceImplement;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,8 @@ public class TareaServiceImpl implements TareaService {
 	public Tarea crearTarea(TareaDTO tareaDTO, Long usuarioId) {
 		// Validar que el nombre de la tarea sea único para el usuario
 		validarNombreTareaUnico(tareaDTO.getDescripcion(), usuarioId);
+		validarPrioridad(tareaDTO.getPrioridad());
+	    validarEstado(tareaDTO.getEstado());
 		
 		// Obtener el usuario por ID
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -83,8 +86,6 @@ public class TareaServiceImpl implements TareaService {
     }
 
 
-
-
 	@Override
 	public Tarea actualizarTarea(Long id, TareaDTO tareaDTO, Long usuarioId) {
 		
@@ -128,6 +129,20 @@ public class TareaServiceImpl implements TareaService {
             validarNombreTareaUnico(tareaDTO.getDescripcion(), usuarioId);
         }
     }
+	
+	private void validarPrioridad(String prioridad) {
+	    List<String> prioridadesPermitidas = Arrays.asList("ALTA", "MEDIA", "BAJA");
+	    if (!prioridadesPermitidas.contains(prioridad.toUpperCase())) {
+	        throw new IllegalArgumentException("La prioridad debe ser ALTA, MEDIA o BAJA.");
+	    }
+	}
+	
+	private void validarEstado(String estado) {
+	    List<String> estadosPermitidos = Arrays.asList("PENDIENTE", "EN PROCESO", "COMPLETADA");
+	    if (!estadosPermitidos.contains(estado.toUpperCase())) {
+	        throw new IllegalArgumentException("El estado debe ser PENDIENTE, EN PROCESO o COMPLETADA.");
+	    }
+	}
 
 	
 	@Override
