@@ -14,8 +14,7 @@ public interface TareaRepository extends JpaRepository<Tarea, Long> {
 	List<Tarea> findByUsuarioId(Long usuarioId);
 	List<Tarea> findByProyectoUsuario(Usuario usuario);
 	Optional<Tarea> findByIdAndUsuarioId(Long id, Long usuarioId);
-	
+    List<Tarea> findByProyectoId(Long proyectoId);
 	List<Tarea> findByUsuarioIdAndPrioridad(Long usuarioId, String prioridad);
-    List<Tarea> findByUsuarioIdAndEstado(Long usuarioId, String estado);
 
 }

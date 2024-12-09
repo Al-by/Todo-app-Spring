@@ -36,8 +36,8 @@ public class Tarea {
 	@Column(nullable = false, length = 50)
 	private String prioridad;
 	
-	@Column(nullable = false, length = 50)
-	private String estado;
+	@Column(nullable = false)
+	private Boolean activo;
 	
     @ManyToOne
     @JoinColumn(name = "proyecto_id", nullable = false)
@@ -48,6 +48,6 @@ public class Tarea {
     @JoinColumn(name = "usuario_id", nullable = false)
     @JsonBackReference // Evita la serialización recursiva del proyecto
     private Usuario usuario;
-	
+
 
 }

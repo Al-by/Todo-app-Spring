@@ -57,7 +57,11 @@ public class TareaController {
         }
     }
 
-
+    @GetMapping("/proyectos/{proyectoId}")
+    public ResponseEntity<List<Tarea>> listarTareasPorProyecto(@PathVariable Long proyectoId) {
+        List<Tarea> tareas = tareaService.listarTareasPorProyecto(proyectoId);
+        return new ResponseEntity<>(tareas, HttpStatus.OK);
+    }
    
     @GetMapping("/listar")
     public ResponseEntity<Object> listarTareasPorUsuario() {
@@ -96,13 +100,6 @@ public class TareaController {
     public ResponseEntity<List<Tarea>> filtrarTareasPorPrioridad(@RequestParam("prioridad") String prioridad) {
         Usuario usuario = obtenerUsuarioLogueado();
         List<Tarea> tareas = tareaService.filtrarTareasPorPrioridad(prioridad, usuario.getId());
-        return ResponseEntity.ok(tareas);
-    }
-
-    @GetMapping("/filtrar/por-estado")
-    public ResponseEntity<List<Tarea>> filtrarTareasPorEstado(@RequestParam("estado") String estado) {
-        Usuario usuario = obtenerUsuarioLogueado();
-        List<Tarea> tareas = tareaService.filtrarTareasPorEstado(estado, usuario.getId());
         return ResponseEntity.ok(tareas);
     }
 

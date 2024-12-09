@@ -13,7 +13,7 @@ public class TareaDTO {
     private String descripcion;
     private LocalDateTime fechaVencimiento;
     private String prioridad;
-    private String estado;
+    private Boolean activo;
     private Long proyectoId;
     private String proyectoNombre;
     private String usuarioNombre;

@@ -13,17 +13,16 @@ public interface TareaService {
 	Tarea crearTarea(TareaDTO tareaDTO, Long usuarioId);
 	
 	List<TareaUsuarioDTO> listarTareasPorUsuario(Long usuarioId);
-	
+
+	List<Tarea> listarTareasPorProyecto(Long proyectoId);
+
 	Tarea actualizarTarea(Long id, TareaDTO tareaDTO, Long UsuarioId);
 	
 	void eliminarTarea (Long id, Long usuarioId);
 	
 	
 	List<Tarea> filtrarTareasPorPrioridad(String prioridad, Long usuarioId);
-	
-    List<Tarea> filtrarTareasPorEstado(String estado, Long usuarioId);
 
-	
 
 
 }
