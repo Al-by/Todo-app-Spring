@@ -33,10 +33,13 @@ public class WebSecurityConfig {
 		return http
 				.cors()
 				.and()
-				.csrf().disable()
+				.csrf()
+				.disable()
 				.authorizeHttpRequests()
-				.antMatchers("/api/register").permitAll() // Permitir acceso público al registrer
-				.anyRequest().authenticated()
+				.antMatchers("/api/register")
+				.permitAll() // Permitir acceso público al registrer
+				.anyRequest()
+				.authenticated()
 				.and()
 				.httpBasic()
 				.and()
