@@ -34,12 +34,13 @@ public class TareaServiceImpl implements TareaService {
 	
 	@Override
 	public Tarea crearTarea(TareaDTO tareaDTO, Long usuarioId) {
-		// Validar que el nombre de la tarea sea único para el usuario
-		validarNombreTareaUnico(tareaDTO.getDescripcion(), usuarioId);
+    
+		// Validar que el nombre de la tarea sea único para cada proyecto
+    validarNombreTareaUnico(tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
+    
 		validarPrioridad(tareaDTO.getPrioridad());
 		validarFechaVencimiento(tareaDTO.getFechaVencimiento());
 		validarActivo(tareaDTO);
-
 		
 		// Obtener el usuario por ID
         Usuario usuario = usuarioRepository.findById(usuarioId)
