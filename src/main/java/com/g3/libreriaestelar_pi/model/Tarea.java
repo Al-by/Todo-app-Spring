@@ -25,7 +25,7 @@ public class Tarea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	@Column(nullable = false, length = 255)
+	@Column(length = 255)
     @NotBlank(message = "La descripción no puede estar vacía")
 	private String descripcion;
 	

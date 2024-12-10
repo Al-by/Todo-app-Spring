@@ -20,7 +20,7 @@ public class Proyecto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     @NotBlank(message = "El nombre del proyecto no puede estar vacío")
     @Size(max = 100, message = "El nombre del proyecto no debe exceder los 100 caracteres")
     private String nombre;
