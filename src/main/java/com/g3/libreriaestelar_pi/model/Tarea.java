@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -29,13 +30,14 @@ public class Tarea {
     @NotBlank(message = "La descripción no puede estar vacía")
 	private String descripcion;
 	
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yy")
 	private LocalDateTime fechaVencimiento; //permite registrar fecha y hora
 	
 	@Column(nullable = false, length = 50)
 	private String prioridad;
 	
 	@Column(nullable = false)
-	private Boolean activo;
+	private Boolean activo = true;
 	
     @ManyToOne
     @JoinColumn(name = "proyecto_id", nullable = false)

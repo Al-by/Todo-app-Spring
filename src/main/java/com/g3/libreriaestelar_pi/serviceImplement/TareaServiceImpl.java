@@ -1,5 +1,6 @@
 package com.g3.libreriaestelar_pi.serviceImplement;
-
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,13 @@ public class TareaServiceImpl implements TareaService {
 	
 	@Override
 	public Tarea crearTarea(TareaDTO tareaDTO, Long usuarioId) {
-		// Validar que el nombre de la tarea sea único para el usuario
-		validarNombreTareaUnico(tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
+    
+		// Validar que el nombre de la tarea sea único para cada proyecto
+    validarNombreTareaUnico(tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
+    
+		validarPrioridad(tareaDTO.getPrioridad());
+		validarFechaVencimiento(tareaDTO.getFechaVencimiento());
+		validarActivo(tareaDTO);
 		
 		// Obtener el usuario por ID
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -95,6 +101,9 @@ public class TareaServiceImpl implements TareaService {
                 .orElseThrow(() -> new RuntimeException("Tarea no encontrado o no tiene permiso para modificarla"));
 
         validarCambioDeNombre(tarea, tareaDTO, usuarioId);
+        validarPrioridad(tareaDTO.getPrioridad());
+		validarFechaVencimiento(tareaDTO.getFechaVencimiento());
+		validarActivo(tareaDTO);
         
         tarea.setDescripcion(tareaDTO.getDescripcion());
         tarea.setActivo(tareaDTO.getActivo());
@@ -116,21 +125,37 @@ public class TareaServiceImpl implements TareaService {
 	}
 	
 
-
 	//VALIDACIONES
-		private void validarNombreTareaUnico(String nombreTarea, Long proyectoId) {
-		    boolean existeTarea = tareaRepository.existsByDescripcionAndProyectoId(nombreTarea, proyectoId);
-		    
-		    if (existeTarea) {
-		        throw new IllegalArgumentException("Ya existe una tarea con el mismo nombre en este proyecto.");
-		    }
-		}
+	private void validarNombreTareaUnico(String descripcion, Long usuarioId) {
+		if (tareaRepository.existsByDescripcionAndUsuarioId(descripcion, usuarioId)) {
+	        throw new IllegalArgumentException("Ya existe una tarea con esta descripción para este proyecto.");
+	    }
+	}
 	
 	private void validarCambioDeNombre(Tarea tarea, TareaDTO tareaDTO, Long usuarioId) {
         if (!tarea.getDescripcion().equals(tareaDTO.getDescripcion())) {
             validarNombreTareaUnico(tareaDTO.getDescripcion(), usuarioId);
         }
     }
+	
+	private void validarPrioridad(String prioridad) {
+	    List<String> prioridadesPermitidas = Arrays.asList("ALTA", "MEDIA", "BAJA");
+	    if (!prioridadesPermitidas.contains(prioridad.toUpperCase())) {
+	        throw new IllegalArgumentException("La prioridad debe ser ALTA, MEDIA o BAJA.");
+	    }
+	}
+	
+	private void validarFechaVencimiento(LocalDateTime fechaVencimiento) {
+	    if (fechaVencimiento.isBefore(LocalDateTime.now())) {
+	        throw new IllegalArgumentException("La fecha de vencimiento no puede ser anterior a la fecha actual.");
+	    }
+	}
+	
+	private void validarActivo(TareaDTO tarea) {
+	    if (tarea.getActivo() == null) {
+	        tarea.setActivo(true); // Establece un valor predeterminado si es nulo
+	    }
+	}
 
 	
 	@Override
@@ -140,8 +165,5 @@ public class TareaServiceImpl implements TareaService {
 	}
 
 	
-
-	
-
 
 }
