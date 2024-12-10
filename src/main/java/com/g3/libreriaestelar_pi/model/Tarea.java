@@ -37,7 +37,7 @@ public class Tarea {
 	private String prioridad;
 	
 	@Column(nullable = false)
-	private Boolean activo;
+	private Boolean activo = true;
 	
     @ManyToOne
     @JoinColumn(name = "proyecto_id", nullable = false)
