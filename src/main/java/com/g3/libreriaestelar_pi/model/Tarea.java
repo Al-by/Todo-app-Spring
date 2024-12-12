@@ -1,15 +1,9 @@
 package com.g3.libreriaestelar_pi.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -48,6 +42,17 @@ public class Tarea {
     @JoinColumn(name = "usuario_id", nullable = false)
     @JsonBackReference // Evita la serialización recursiva del proyecto
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "creador_id", nullable = false)
+    private Usuario creador;
+
+    @ManyToOne
+    @JoinColumn(name = "asignado_id")
+    private Usuario asignado;
+
+    @OneToMany(mappedBy = "tarea", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
 
 
 }

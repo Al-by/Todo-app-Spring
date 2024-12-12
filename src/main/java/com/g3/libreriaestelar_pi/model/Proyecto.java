@@ -33,9 +33,20 @@ public class Proyecto {
     @JsonIgnore
     private Usuario usuario;
     
-    @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference//Ignorar la serializacion de la lista tareas
     private List<Tarea> tareas;
 
-    
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private Usuario owner;
+
+    @ManyToMany
+    @JoinTable(
+            name = "proyecto_usuario",
+            joinColumns = @JoinColumn(name = "proyecto_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private List<Usuario> invitados;
+
 }

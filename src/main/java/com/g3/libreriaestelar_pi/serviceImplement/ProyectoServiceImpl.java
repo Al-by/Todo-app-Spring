@@ -30,6 +30,7 @@ public class ProyectoServiceImpl implements ProyectoService {
         proyecto.setNombre(proyectoDTO.getNombre());
         proyecto.setDescripcion(proyectoDTO.getDescripcion());
         proyecto.setUsuario(usuario);
+        proyecto.setOwner(usuario);
 
         return proyectoRepository.save(proyecto);
     }

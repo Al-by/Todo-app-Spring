@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.g3.libreriaestelar_pi.repository.ComentarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,42 +30,48 @@ public class TareaServiceImpl implements TareaService {
 	
 	@Autowired
     private UsuarioRepository usuarioRepository;
-	
-	
-	
+
+	@Autowired
+	private ComentarioRepository comentarioRepository;
+
 	@Override
 	public Tarea crearTarea(TareaDTO tareaDTO, Long usuarioId) {
-    
-		// Validar que el nombre de la tarea sea único para cada proyecto
-    validarNombreTareaUnico(tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
-    
+		// Validar que el nombre de la tarea sea único dentro del proyecto
+		validarNombreTareaUnico(tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
+
+		// Validar otros campos
 		validarPrioridad(tareaDTO.getPrioridad());
 		validarFechaVencimiento(tareaDTO.getFechaVencimiento());
 		validarActivo(tareaDTO);
-		
-		// Obtener el usuario por ID
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Obtener el proyecto por ID
-        Proyecto proyecto = proyectoRepository.findById(tareaDTO.getProyectoId())
-                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
-        
-        if (!proyecto.getUsuario().getId().equals(usuarioId)) {
-            throw new RuntimeException("No tiene permiso para crear tareas en este proyecto");
-        }
-        
-     // Crear y asignar los valores a la tarea
-        Tarea tarea = new Tarea();
-        tarea.setDescripcion(tareaDTO.getDescripcion());
-        tarea.setPrioridad(tareaDTO.getPrioridad());
-        tarea.setActivo(tareaDTO.getActivo());
-        tarea.setFechaVencimiento(tareaDTO.getFechaVencimiento());
-        tarea.setProyecto(proyecto);
-        tarea.setUsuario(usuario);
 
-        return tareaRepository.save(tarea);
+		// Obtener el usuario creador
+		Usuario usuarioCreador = usuarioRepository.findById(usuarioId)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+		// Obtener el proyecto asociado
+		Proyecto proyecto = proyectoRepository.findById(tareaDTO.getProyectoId())
+				.orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+
+		// Validar permisos: el usuario debe ser el propietario o un invitado del proyecto
+		if (!proyecto.getOwner().getId().equals(usuarioId) &&
+				proyecto.getInvitados().stream().noneMatch(u -> u.getId().equals(usuarioId))) {
+			throw new RuntimeException("No tiene permiso para crear tareas en este proyecto");
+		}
+
+		// Crear y asignar los valores a la tarea
+		Tarea tarea = new Tarea();
+		tarea.setDescripcion(tareaDTO.getDescripcion());
+		tarea.setPrioridad(tareaDTO.getPrioridad());
+		tarea.setActivo(tareaDTO.getActivo());
+		tarea.setFechaVencimiento(tareaDTO.getFechaVencimiento());
+		tarea.setProyecto(proyecto);
+		tarea.setUsuario(usuarioCreador); // Usuario relacionado con la tarea
+		tarea.setCreador(usuarioCreador); // Usuario que creó la tarea
+
+		// Guardar la tarea
+		return tareaRepository.save(tarea);
 	}
+
 	
 
     @Override
@@ -117,12 +124,14 @@ public class TareaServiceImpl implements TareaService {
 
 	@Override
 	public void eliminarTarea(Long id, Long usuarioId) {
+		// Buscar la tarea y validar que pertenece al usuario autenticado
 		Tarea tarea = tareaRepository.findByIdAndUsuarioId(id, usuarioId)
-                .orElseThrow(() -> new RuntimeException("Tarea no encontrado o no tiene permiso para eliminarla"));
+				.orElseThrow(() -> new RuntimeException("Tarea no encontrada o no tiene permiso para eliminarla"));
 
-        tareaRepository.delete(tarea);
-		
+		// Eliminar la tarea (comentarios relacionados serán eliminados automáticamente por la cascada)
+		tareaRepository.delete(tarea);
 	}
+
 	
 
 	//VALIDACIONES
