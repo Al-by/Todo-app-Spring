@@ -103,34 +103,51 @@ public class TareaServiceImpl implements TareaService {
 
 	@Override
 	public Tarea actualizarTarea(Long id, TareaDTO tareaDTO, Long usuarioId) {
-		
-		Tarea tarea = tareaRepository.findByIdAndUsuarioId(id, usuarioId)
-                .orElseThrow(() -> new RuntimeException("Tarea no encontrado o no tiene permiso para modificarla"));
+		// Buscar la tarea por ID
+		Tarea tarea = tareaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
 
-        validarCambioDeNombre(tarea, tareaDTO, usuarioId);
-        validarPrioridad(tareaDTO.getPrioridad());
+		// Validar permisos: Solo el creador o el dueño del proyecto pueden modificar la tarea
+		if (!tarea.getCreador().getId().equals(usuarioId) &&
+				!tarea.getProyecto().getOwner().getId().equals(usuarioId)) {
+			throw new RuntimeException("No tiene permiso para modificar esta tarea");
+		}
+
+		// Validaciones de campos
+		validarCambioDeNombre(tarea, tareaDTO, usuarioId);
+		validarPrioridad(tareaDTO.getPrioridad());
 		validarFechaVencimiento(tareaDTO.getFechaVencimiento());
 		validarActivo(tareaDTO);
-        
-        tarea.setDescripcion(tareaDTO.getDescripcion());
-        tarea.setActivo(tareaDTO.getActivo());
-        tarea.setPrioridad(tareaDTO.getPrioridad());
-        tarea.setFechaVencimiento(tareaDTO.getFechaVencimiento());
 
-        return tareaRepository.save(tarea);
+		// Actualizar los valores de la tarea
+		tarea.setDescripcion(tareaDTO.getDescripcion());
+		tarea.setActivo(tareaDTO.getActivo());
+		tarea.setPrioridad(tareaDTO.getPrioridad());
+		tarea.setFechaVencimiento(tareaDTO.getFechaVencimiento());
+
+		// Guardar la tarea actualizada
+		return tareaRepository.save(tarea);
 	}
+
 
 
 
 	@Override
 	public void eliminarTarea(Long id, Long usuarioId) {
-		// Buscar la tarea y validar que pertenece al usuario autenticado
-		Tarea tarea = tareaRepository.findByIdAndUsuarioId(id, usuarioId)
-				.orElseThrow(() -> new RuntimeException("Tarea no encontrada o no tiene permiso para eliminarla"));
+		// Buscar la tarea por ID
+		Tarea tarea = tareaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
 
-		// Eliminar la tarea (comentarios relacionados serán eliminados automáticamente por la cascada)
+		// Validar permisos: Solo el creador o el dueño del proyecto pueden eliminar la tarea
+		if (!tarea.getCreador().getId().equals(usuarioId) &&
+				!tarea.getProyecto().getOwner().getId().equals(usuarioId)) {
+			throw new RuntimeException("No tiene permiso para eliminar esta tarea");
+		}
+
+		// Eliminar la tarea (comentarios relacionados se eliminan automáticamente por cascada)
 		tareaRepository.delete(tarea);
 	}
+
 
 	
 
