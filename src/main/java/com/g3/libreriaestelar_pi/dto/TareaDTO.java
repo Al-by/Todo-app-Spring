@@ -17,7 +17,7 @@ public class TareaDTO {
     private Long proyectoId;
     private String proyectoNombre;
     private String usuarioNombre;
-
+    private String asignado;
 }
 
 
