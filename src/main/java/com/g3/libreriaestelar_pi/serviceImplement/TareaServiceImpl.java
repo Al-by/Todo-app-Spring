@@ -138,7 +138,7 @@ public class TareaServiceImpl implements TareaService {
 		tarea.setPrioridad(tareaDTO.getPrioridad());
 		tarea.setFechaVencimiento(tareaDTO.getFechaVencimiento());
 		
-		// Asignar un usuario si el usuarioAsignadoId está presente en el DTO
+		// Asignar un usuario si el email  está presente en el DTO
 	    if (tareaDTO.getAsignado() != null) {
 	        // Obtener el proyecto asociado a la tarea
 	        Proyecto proyecto = tarea.getProyecto();
