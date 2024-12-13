@@ -1,5 +1,7 @@
 package com.g3.libreriaestelar_pi.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
@@ -10,4 +12,5 @@ public class ProyectoDTO {
     private String nombre;
     private String descripcion;
     private Long usuarioId;
+    private List<String> invitados; //IDs de usuarios invitados
 }

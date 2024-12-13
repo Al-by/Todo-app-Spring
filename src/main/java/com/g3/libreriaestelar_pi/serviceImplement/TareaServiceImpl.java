@@ -67,7 +67,20 @@ public class TareaServiceImpl implements TareaService {
 		tarea.setProyecto(proyecto);
 		tarea.setUsuario(usuarioCreador); // Usuario relacionado con la tarea
 		tarea.setCreador(usuarioCreador); // Usuario que creó la tarea
+		
+		
+		// Asignar la tarea a un invitado si el usuarioAsignadoId está presente y es un invitado del proyecto
+	    if (tareaDTO.getAsignado() != null) {
+	        Usuario usuarioAsignado = usuarioRepository.findByEmail(tareaDTO.getAsignado())
+	                .orElseThrow(() -> new RuntimeException("Usuario asignado no encontrado"));
 
+	        if (!proyecto.getInvitados().contains(usuarioAsignado) && !proyecto.getOwner().getId().equals(usuarioAsignado.getId())) {
+	            throw new RuntimeException("El usuario asignado no es invitado del proyecto o el creador del proyecto");
+	        }
+
+	        tarea.setAsignado(usuarioAsignado);
+	    }
+	    
 		// Guardar la tarea
 		return tareaRepository.save(tarea);
 	}
@@ -124,6 +137,23 @@ public class TareaServiceImpl implements TareaService {
 		tarea.setActivo(tareaDTO.getActivo());
 		tarea.setPrioridad(tareaDTO.getPrioridad());
 		tarea.setFechaVencimiento(tareaDTO.getFechaVencimiento());
+		
+		// Asignar un usuario si el usuarioAsignadoId está presente en el DTO
+	    if (tareaDTO.getAsignado() != null) {
+	        // Obtener el proyecto asociado a la tarea
+	        Proyecto proyecto = tarea.getProyecto();
+
+	        // Verificar que el usuario asignado sea un invitado del proyecto o el creador
+	        Usuario usuarioAsignado = usuarioRepository.findByEmail(tareaDTO.getAsignado())
+	                .orElseThrow(() -> new RuntimeException("Usuario asignado no encontrado"));
+
+	        if (!proyecto.getInvitados().contains(usuarioAsignado) && !proyecto.getOwner().getId().equals(usuarioAsignado.getId())) {
+	            throw new RuntimeException("El usuario asignado no es invitado del proyecto o el creador del proyecto");
+	        }
+
+	        // Asignar el usuario a la tarea
+	        tarea.setAsignado(usuarioAsignado);
+	    }
 
 		// Guardar la tarea actualizada
 		return tareaRepository.save(tarea);

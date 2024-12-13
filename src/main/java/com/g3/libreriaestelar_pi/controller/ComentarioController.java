@@ -41,7 +41,8 @@ public class ComentarioController {
 
     @GetMapping("/{tareaId}")
     public ResponseEntity<List<Comentario>> listarComentarios(@PathVariable Long tareaId) {
-        return ResponseEntity.ok(comentarioService.listarComentarios(tareaId));
+    	Long usuarioId = obtenerUsuarioLogueado().getId();
+        return ResponseEntity.ok(comentarioService.listarComentarios(tareaId, usuarioId));
     }
 
     @PutMapping("/{comentarioId}")
