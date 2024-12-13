@@ -153,6 +153,9 @@ public class TareaServiceImpl implements TareaService {
 
 	        // Asignar el usuario a la tarea
 	        tarea.setAsignado(usuarioAsignado);
+	    } else {
+	        // Si el valor es null, desasignamos al usuario
+	        tarea.setAsignado(null);
 	    }
 
 		// Guardar la tarea actualizada
