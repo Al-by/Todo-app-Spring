@@ -22,6 +22,8 @@ public class ProyectoServiceImpl implements ProyectoService {
 
 	@Override
 	public Proyecto crearProyecto(ProyectoDTO proyectoDTO, Long usuarioId) {
+	    validarNombreNoDuplicadoParaInvitado(proyectoDTO.getNombre(), usuarioId);
+
 		validarNombreUnico(proyectoDTO.getNombre(), usuarioId);
 
 		Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -36,11 +38,15 @@ public class ProyectoServiceImpl implements ProyectoService {
 		if (proyectoDTO.getInvitados() != null && !proyectoDTO.getInvitados().isEmpty()) {
 			List<Usuario> invitados = usuarioRepository.findByEmailIn(proyectoDTO.getInvitados());
 
-		// Validar que todos los usuarios existen
-		if (invitados.size() != proyectoDTO.getInvitados().size()) {
-			throw new RuntimeException("Algunos IDs de invitados no son válidos.");
-		}
-
+			// Validar que todos los usuarios existen
+			if (invitados.size() != proyectoDTO.getInvitados().size()) {
+				throw new RuntimeException("Algunos IDs de invitados no son válidos.");
+			}
+			
+			for (Usuario invitado : invitados) {
+	            invitado.getProyectosInvitados().add(proyecto);
+	        }
+	
 			proyecto.setInvitados(invitados);
 		}
 
@@ -49,13 +55,22 @@ public class ProyectoServiceImpl implements ProyectoService {
 
 	@Override
 	public List<Proyecto> listarProyectosPorUsuario(Long usuarioId) {
-		return proyectoRepository.findByUsuarioId(usuarioId);
+		List<Proyecto> proyectosPropios = proyectoRepository.findByUsuarioId(usuarioId);
+
+	    // Obtiene proyectos donde el usuario es invitado
+	    List<Proyecto> proyectosInvitado = proyectoRepository.findByInvitadosId(usuarioId);
+
+	    // Combina ambas listas
+	    proyectosPropios.addAll(proyectosInvitado);
+
+	    
+		return proyectosPropios;
 	}
 
 	@Override
 	public Proyecto actualizarProyecto(Long id, ProyectoDTO proyectoDTO, Long usuarioId) {
 		Proyecto proyecto = proyectoRepository.findByIdAndUsuarioId(id, usuarioId)
-				.orElseThrow(() -> new RuntimeException("Proyecto no encontrado o no tiene permiso para modificarlo"));
+				.orElseThrow(() -> new IllegalArgumentException("Proyecto no encontrado o no tiene permiso para modificarlo"));
 
 		validarCambioDeNombre(proyecto, proyectoDTO, usuarioId);
 
@@ -70,12 +85,16 @@ public class ProyectoServiceImpl implements ProyectoService {
 
 	    // Validar que los invitados sean correctos
 	    if (nuevosInvitados.size() != proyectoDTO.getInvitados().size()) {
-	        throw new RuntimeException("Algunos IDs de invitados no son válidos.");
+	        throw new IllegalArgumentException("Algunos IDs de invitados no son válidos.");
 	    }
 
 	        // Asignar los nuevos invitados al proyecto
 	        proyecto.setInvitados(nuevosInvitados);
 	    }
+	    
+	    // Validar que el nombre del proyecto no se repita en proyectos donde el usuario es invitado
+	    validarNombreNoDuplicadoParaInvitadoEnActualizacion(proyectoDTO.getNombre(), usuarioId, id);
+
 
 		return proyectoRepository.save(proyecto);
 	}
@@ -83,7 +102,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 	@Override
 	public void eliminarProyecto(Long id, Long usuarioId) {
 		Proyecto proyecto = proyectoRepository.findByIdAndUsuarioId(id, usuarioId)
-				.orElseThrow(() -> new RuntimeException("Proyecto no encontrado o no tiene permiso para eliminarlo"));
+				.orElseThrow(() -> new IllegalArgumentException("Proyecto no encontrado o no tiene permiso para eliminarlo"));
 
 		proyectoRepository.delete(proyecto);
 	}
@@ -97,7 +116,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 		boolean existeProyecto = proyectoRepository.existsByNombreAndUsuarioId(nombre, usuarioId);
 
 		if (existeProyecto) {
-			throw new RuntimeException("Ya existe un proyecto con este nombre para el usuario.");
+			throw new IllegalArgumentException("Ya existe un proyecto con este nombre para el usuario.");
 		}
 	}
 
@@ -105,5 +124,27 @@ public class ProyectoServiceImpl implements ProyectoService {
 		if (!proyecto.getNombre().equals(proyectoDTO.getNombre())) {
 			validarNombreUnico(proyectoDTO.getNombre(), usuarioId);
 		}
+	}
+	
+	private void validarNombreNoDuplicadoParaInvitado(String nombreProyecto, Long usuarioId) {
+	    // Buscar proyectos donde el usuario es invitado
+	    List<Proyecto> proyectosInvitados = proyectoRepository.findByInvitadosId(usuarioId);
+
+	    // Verificar si alguno de esos proyectos tiene el mismo nombre
+	    for (Proyecto proyecto : proyectosInvitados) {
+	        if (proyecto.getNombre().equals(nombreProyecto)) {
+	            throw new IllegalArgumentException("No puedes crear un proyecto con el mismo nombre al que ya estás invitado.");
+	        }
+	    }
+	}
+	
+	private void validarNombreNoDuplicadoParaInvitadoEnActualizacion(String nombreProyecto, Long usuarioId, Long proyectoId) {
+	    List<Proyecto> proyectosInvitados = proyectoRepository.findByInvitadosId(usuarioId);
+	    for (Proyecto proyecto : proyectosInvitados) {
+	        
+	        if (proyecto.getNombre().equals(nombreProyecto) && !proyecto.getId().equals(proyectoId)) {
+	            throw new IllegalArgumentException("No puedes actualizar el proyecto con el mismo nombre al que ya estás invitado.");
+	        }
+	    }
 	}
 }

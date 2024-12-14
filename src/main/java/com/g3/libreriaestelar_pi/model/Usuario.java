@@ -1,10 +1,15 @@
 package com.g3.libreriaestelar_pi.model;
 
+import java.util.List;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -31,10 +36,19 @@ public class Usuario {
     @Column(nullable = false, length = 255) // NOT NULL, longitud máxima
     @NotBlank(message = "La contraseña no puede estar vacía")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false, unique = true, length = 8) // NOT NULL, UNIQUE, longitud fija
     @NotBlank(message = "El DNI no puede estar vacío")
     @Pattern(regexp = "\\d{8}", message = "El DNI debe contener exactamente 8 dígitos")
     private String dni;
+    
+    @OneToMany(mappedBy = "owner")
+    @JsonIgnore
+    private List<Proyecto> proyectosPropios;
+    
+    @ManyToMany(mappedBy = "invitados")
+    @JsonBackReference
+    private List<Proyecto> proyectosInvitados; 
 }
