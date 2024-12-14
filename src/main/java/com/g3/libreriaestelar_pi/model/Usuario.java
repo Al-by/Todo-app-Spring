@@ -6,6 +6,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
@@ -31,6 +33,7 @@ public class Usuario {
     @Column(nullable = false, length = 255) // NOT NULL, longitud máxima
     @NotBlank(message = "La contraseña no puede estar vacía")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false, unique = true, length = 8) // NOT NULL, UNIQUE, longitud fija

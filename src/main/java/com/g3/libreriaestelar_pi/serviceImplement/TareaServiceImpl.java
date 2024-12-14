@@ -57,6 +57,12 @@ public class TareaServiceImpl implements TareaService {
 				proyecto.getInvitados().stream().noneMatch(u -> u.getId().equals(usuarioId))) {
 			throw new RuntimeException("No tiene permiso para crear tareas en este proyecto");
 		}
+		
+		boolean esInvitado = proyecto.getInvitados().stream().anyMatch(u -> u.getId().equals(usuarioId));
+		
+		//Validar que el invitado no repita descripcion de tarea
+		validarNombreUnicoParaInvitado(esInvitado, tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
+		    
 
 		// Crear y asignar los valores a la tarea
 		Tarea tarea = new Tarea();
@@ -213,6 +219,16 @@ public class TareaServiceImpl implements TareaService {
 	private void validarActivo(TareaDTO tarea) {
 	    if (tarea.getActivo() == null) {
 	        tarea.setActivo(true); // Establece un valor predeterminado si es nulo
+	    }
+	}
+	
+	private void validarNombreUnicoParaInvitado(boolean esInvitado, String descripcion, Long proyectoId) {
+	    if (esInvitado) {
+	        boolean existeTareaConMismoNombre = tareaRepository.existsByDescripcionAndProyectoId(descripcion, proyectoId);
+
+	        if (existeTareaConMismoNombre) {
+	            throw new RuntimeException("Ya existe una tarea con la misma descripcion.");
+	        }
 	    }
 	}
 
