@@ -1,5 +1,6 @@
 package com.g3.libreriaestelar_pi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -31,6 +32,7 @@ public class Proyecto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     @JsonIgnore
+    @JsonBackReference
     private Usuario usuario;
     
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -47,6 +49,7 @@ public class Proyecto {
             joinColumns = @JoinColumn(name = "proyecto_id"),
             inverseJoinColumns = @JoinColumn(name = "usuario_id")
     )
+    @JsonManagedReference
     private List<Usuario> invitados;
 
 }

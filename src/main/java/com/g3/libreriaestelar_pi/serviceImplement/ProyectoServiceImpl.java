@@ -36,11 +36,15 @@ public class ProyectoServiceImpl implements ProyectoService {
 		if (proyectoDTO.getInvitados() != null && !proyectoDTO.getInvitados().isEmpty()) {
 			List<Usuario> invitados = usuarioRepository.findByEmailIn(proyectoDTO.getInvitados());
 
-		// Validar que todos los usuarios existen
-		if (invitados.size() != proyectoDTO.getInvitados().size()) {
-			throw new RuntimeException("Algunos IDs de invitados no son válidos.");
-		}
-
+			// Validar que todos los usuarios existen
+			if (invitados.size() != proyectoDTO.getInvitados().size()) {
+				throw new RuntimeException("Algunos IDs de invitados no son válidos.");
+			}
+			
+			for (Usuario invitado : invitados) {
+	            invitado.getProyectosInvitados().add(proyecto);
+	        }
+	
 			proyecto.setInvitados(invitados);
 		}
 
@@ -49,7 +53,16 @@ public class ProyectoServiceImpl implements ProyectoService {
 
 	@Override
 	public List<Proyecto> listarProyectosPorUsuario(Long usuarioId) {
-		return proyectoRepository.findByUsuarioId(usuarioId);
+		List<Proyecto> proyectosPropios = proyectoRepository.findByUsuarioId(usuarioId);
+
+	    // Obtener proyectos donde el usuario es invitado
+	    List<Proyecto> proyectosInvitado = proyectoRepository.findByInvitadosId(usuarioId);
+
+	    // Combinar ambas listas
+	    proyectosPropios.addAll(proyectosInvitado);
+
+	    
+		return proyectosPropios;
 	}
 
 	@Override
