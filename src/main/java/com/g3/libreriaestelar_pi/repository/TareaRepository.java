@@ -13,6 +13,9 @@ public interface TareaRepository extends JpaRepository<Tarea, Long> {
 	boolean existsByDescripcionAndUsuarioId(String descripcion, Long usuarioId);
 	boolean existsByDescripcionAndProyectoId(String descripcion, Long proyectoId);
 	boolean existsByDescripcion(String descripcion);
+	List<Tarea> findByProyectoIdAndCreadorNot(Long proyectoId, Long creadorId);
+    boolean existsByProyectoIdAndDescripcionAndIdNot(Long proyectoId, String descripcion, Long tareaId);
+
 	List<Tarea> findByUsuarioId(Long usuarioId);
 	List<Tarea> findByProyectoUsuario(Usuario usuario);
 	Optional<Tarea> findByIdAndUsuarioId(Long id, Long usuarioId);

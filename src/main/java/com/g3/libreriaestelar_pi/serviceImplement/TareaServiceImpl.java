@@ -37,6 +37,7 @@ public class TareaServiceImpl implements TareaService {
 	@Override
 	public Tarea crearTarea(TareaDTO tareaDTO, Long usuarioId) {
 		// Validar que el nombre de la tarea sea único dentro del proyecto
+		
 		validarNombreTareaUnico(tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
 
 		// Validar otros campos
@@ -57,11 +58,14 @@ public class TareaServiceImpl implements TareaService {
 				proyecto.getInvitados().stream().noneMatch(u -> u.getId().equals(usuarioId))) {
 			throw new RuntimeException("No tiene permiso para crear tareas en este proyecto");
 		}
+	    validarDescripcionUnicaEntreInvitados(tareaDTO.getDescripcion(), proyecto.getId(), usuarioId);
 		
 		boolean esInvitado = proyecto.getInvitados().stream().anyMatch(u -> u.getId().equals(usuarioId));
 		
 		//Validar que el invitado no repita descripcion de tarea
 		validarNombreUnicoParaInvitado(esInvitado, tareaDTO.getDescripcion(), tareaDTO.getProyectoId());
+	
+
 		    
 
 		// Crear y asignar los valores a la tarea
@@ -132,11 +136,20 @@ public class TareaServiceImpl implements TareaService {
 			throw new IllegalArgumentException("No tiene permiso para modificar esta tarea");
 		}
 		
+		
 		//Validación de descripción única para invitados
 	    boolean esInvitado = tarea.getProyecto().getInvitados().stream()
 	            .anyMatch(usuario -> usuario.getId().equals(usuarioId)); // Verificar si el usuario es invitado
 	    
 	    validarNombreUnicoParaInvitado(esInvitado, tareaDTO.getDescripcion(), tarea.getProyecto().getId());
+	    
+	 // Validar que no haya otra tarea con la misma descripción en el proyecto
+	    boolean existeDescripcionDuplicada = tareaRepository.existsByProyectoIdAndDescripcionAndIdNot(
+	            tarea.getProyecto().getId(), tareaDTO.getDescripcion(), tarea.getId());
+
+	    if (existeDescripcionDuplicada) {
+	        throw new IllegalArgumentException("Ya existe una tarea con la misma descripción en este proyecto.");
+	    }
 
 		// Validaciones de campos
 		validarCambioDeNombre(tarea, tareaDTO, usuarioId);
@@ -169,6 +182,7 @@ public class TareaServiceImpl implements TareaService {
 	        // Si el valor es null, desasignamos al usuario
 	        tarea.setAsignado(null);
 	    }
+	   
 
 		// Guardar la tarea actualizada
 		return tareaRepository.save(tarea);
@@ -238,6 +252,20 @@ public class TareaServiceImpl implements TareaService {
 	    }
 	}
 
+	private void validarDescripcionUnicaEntreInvitados(String descripcion, Long proyectoId, Long usuarioId) {
+	    // Obtener tareas del proyecto creadas por usuarios invitados
+	    List<Tarea> tareasDeInvitados = tareaRepository.findByProyectoIdAndCreadorNot(proyectoId, usuarioId);
+
+	    // Verificar si alguna tarea tiene la misma descripción
+	    boolean descripcionDuplicada = tareasDeInvitados.stream()
+	            .anyMatch(tarea -> tarea.getDescripcion().equalsIgnoreCase(descripcion));
+
+	    if (descripcionDuplicada) {
+	        throw new IllegalArgumentException("No puedes crear o actualizar una tarea con la misma descripción que otra tarea creada por un usuario invitado.");
+	    }
+	}
+	
+	
 	
 	@Override
 	public List<Tarea> filtrarTareasPorPrioridad(String prioridad, Long usuarioId) {

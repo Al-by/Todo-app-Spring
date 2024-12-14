@@ -102,7 +102,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 	@Override
 	public void eliminarProyecto(Long id, Long usuarioId) {
 		Proyecto proyecto = proyectoRepository.findByIdAndUsuarioId(id, usuarioId)
-				.orElseThrow(() -> new RuntimeException("Proyecto no encontrado o no tiene permiso para eliminarlo"));
+				.orElseThrow(() -> new IllegalArgumentException("Proyecto no encontrado o no tiene permiso para eliminarlo"));
 
 		proyectoRepository.delete(proyecto);
 	}
