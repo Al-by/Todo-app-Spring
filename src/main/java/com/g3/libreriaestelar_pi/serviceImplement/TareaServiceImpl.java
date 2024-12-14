@@ -129,8 +129,14 @@ public class TareaServiceImpl implements TareaService {
 		// Validar permisos: Solo el creador o el dueño del proyecto pueden modificar la tarea
 		if (!tarea.getCreador().getId().equals(usuarioId) &&
 				!tarea.getProyecto().getOwner().getId().equals(usuarioId)) {
-			throw new RuntimeException("No tiene permiso para modificar esta tarea");
+			throw new IllegalArgumentException("No tiene permiso para modificar esta tarea");
 		}
+		
+		//Validación de descripción única para invitados
+	    boolean esInvitado = tarea.getProyecto().getInvitados().stream()
+	            .anyMatch(usuario -> usuario.getId().equals(usuarioId)); // Verificar si el usuario es invitado
+	    
+	    validarNombreUnicoParaInvitado(esInvitado, tareaDTO.getDescripcion(), tarea.getProyecto().getId());
 
 		// Validaciones de campos
 		validarCambioDeNombre(tarea, tareaDTO, usuarioId);
@@ -154,7 +160,7 @@ public class TareaServiceImpl implements TareaService {
 	                .orElseThrow(() -> new RuntimeException("Usuario asignado no encontrado"));
 
 	        if (!proyecto.getInvitados().contains(usuarioAsignado) && !proyecto.getOwner().getId().equals(usuarioAsignado.getId())) {
-	            throw new RuntimeException("El usuario asignado no es invitado del proyecto o el creador del proyecto");
+	            throw new IllegalArgumentException("El usuario asignado no es invitado del proyecto o el creador del proyecto");
 	        }
 
 	        // Asignar el usuario a la tarea
@@ -227,7 +233,7 @@ public class TareaServiceImpl implements TareaService {
 	        boolean existeTareaConMismoNombre = tareaRepository.existsByDescripcionAndProyectoId(descripcion, proyectoId);
 
 	        if (existeTareaConMismoNombre) {
-	            throw new RuntimeException("Ya existe una tarea con la misma descripcion.");
+	            throw new IllegalArgumentException("Ya existe una tarea con la misma descripcion.");
 	        }
 	    }
 	}
