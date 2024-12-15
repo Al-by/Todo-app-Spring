@@ -24,7 +24,7 @@ public class Tarea {
     @NotBlank(message = "La descripción no puede estar vacía")
 	private String descripcion;
 	
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yy")
+	@Column(nullable = false)
 	private LocalDateTime fechaVencimiento; //permite registrar fecha y hora
 	
 	@Column(nullable = false, length = 50)
