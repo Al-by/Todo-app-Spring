@@ -58,7 +58,6 @@ public class TareaServiceImpl implements TareaService {
 				proyecto.getInvitados().stream().noneMatch(u -> u.getId().equals(usuarioId))) {
 			throw new RuntimeException("No tiene permiso para crear tareas en este proyecto");
 		}
-	    validarDescripcionUnicaEntreInvitados(tareaDTO.getDescripcion(), proyecto.getId(), usuarioId);
 		
 		boolean esInvitado = proyecto.getInvitados().stream().anyMatch(u -> u.getId().equals(usuarioId));
 		
@@ -252,19 +251,6 @@ public class TareaServiceImpl implements TareaService {
 	    }
 	}
 
-	private void validarDescripcionUnicaEntreInvitados(String descripcion, Long proyectoId, Long usuarioId) {
-	    // Obtener tareas del proyecto creadas por usuarios invitados
-	    List<Tarea> tareasDeInvitados = tareaRepository.findByProyectoIdAndCreadorNot(proyectoId, usuarioId);
-
-	    // Verificar si alguna tarea tiene la misma descripción
-	    boolean descripcionDuplicada = tareasDeInvitados.stream()
-	            .anyMatch(tarea -> tarea.getDescripcion().equalsIgnoreCase(descripcion));
-
-	    if (descripcionDuplicada) {
-	        throw new IllegalArgumentException("No puedes crear o actualizar una tarea con la misma descripción que otra tarea creada por un usuario invitado.");
-	    }
-	}
-	
 	
 	
 	@Override
